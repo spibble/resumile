@@ -12,7 +12,7 @@ rm fonts
 echo "Moving to fonts directory..."
 mkdir fonts
 mv $UNZIP_DIR fonts
-rm temp
+rm -r temp
 
 echo "Installing fonts..."
 
@@ -21,11 +21,12 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   FONT_DIR="$HOME/Library/Fonts"
   cp fonts/* $FONT_DIR
   echo "All done :)"
-elif [ $OSTYPE == 'linux-gnu' ]; then
+elif [ $OSTYPE == 'linux-gnu']; then
   FONT_DIR="$HOME/.local/share/fonts"
   cp fonts/* $FONT_DIR
   echo "All done :)"
 else
   echo "You are either on Windows or some OS that I don't know."
   echo "Sorry, I don't know how to automatically install fonts through that OS :( so please install them manually." 
+  echo "You can find the .otf files I downloaded in ./fonts!"
 fi
