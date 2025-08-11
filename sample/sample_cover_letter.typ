@@ -1,5 +1,5 @@
 #import "utils.typ": conf, header, section
-#import "main.typ": margin_x, margin_y, name_font_size, info_font_size, heading_font_size, name_font, info_font, heading_font, body_font, name, loc, phone, email, website, linkedin, github, info_font, info_font_size, header_style, name_color, heading_color, show_icons
+#import "sample_main.typ": margin_x, margin_y, name_font_size, info_font_size, heading_font_size, name_font, info_font, heading_font, body_font, name, loc, phone, email, website, linkedin, github, info_font, info_font_size, header_style, name_color, heading_color, show_icons
 
 #let body_font_size = 12pt
 

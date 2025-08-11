@@ -21,7 +21,7 @@
 #let name_color        = black
 #let heading_color     = black
 
-#let show_icons        = false
+#let show_icons        = true
 
 // 0: Inline name/info. Saves vertical space
 // 1: Name/info on separate lines. More traditional + good for longer names
