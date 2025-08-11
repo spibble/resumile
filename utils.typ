@@ -10,7 +10,7 @@
   
   assert(
     fmts.contains(type(num)), 
-    message: "GPA should be a numeric type (i.e., int, float) or a string!")
+    message: "GPA should be a numeric type (i.e., int, float) or string.")
   
   if type(num) == int [ #num.00 ] 
   else if type(num) == float [ #num ]
@@ -19,6 +19,22 @@
     let numeric_num = float(num.split(regex("[^[+-]?\d*\.?\d+$]")).first())
     [#numeric_num]
   }
+}
+
+#let better_link(url, proj: none) = {
+  assert(
+    type(url) == str, 
+    message: "url should be a string.")
+
+  if proj == none {
+    if "https://www." in url { link(url)[#url.slice(12)] }
+    else if "https://" in url { link(url)[#url.slice(8)] }
+    else if "www." in url { link(url)[#url.slice(4)] }
+    else { link("https://" + url)[#url] }
+  } else if proj == "live" { link(url)[Live] 
+  } else { link(url)[Source Code]
+  }
+  
 }
 
 /*
@@ -41,6 +57,7 @@
   margin_x, margin_y,
   name_font_size, info_font_size, heading_font_size, body_font_size,
   name_font, info_font, heading_font, body_font,
+  name_color, heading_color, show_icons,
   doc
 ) = {
   set page(
@@ -48,8 +65,8 @@
     margin: (x: margin_x, y: margin_y)
   )
 
-  show heading.where(level: 1): set text(black, name_font_size, font: name_font)
-  show heading.where(level: 2): set text(blue, heading_font_size, font: heading_font)
+  show heading.where(level: 1): set text(name_color, name_font_size, font: name_font)
+  show heading.where(level: 2): set text(heading_color, heading_font_size, font: heading_font)
   set text(font: body_font)
 
   set text(body_font_size, font: body_font)
@@ -67,9 +84,9 @@
 #let header(
   name, loc, phone, email, 
   website, linkedin, github,
-  info_font, info_font_size, header_style
+  info_font, info_font_size, header_style, show_icons
 ) = {
-  if header_style == 0 {
+  if header_style == 0 and show_icons == true {
     table(
       columns: (2fr, auto),
       align: (left + horizon, right + horizon),
@@ -82,38 +99,75 @@
         #fa-icon("square-envelope", fill: teal) #link("mailto:" + email)
         \
         #if website != "" [
-          #fa-icon("globe", fill: eastern) #link(website) 
+          #fa-icon("globe", fill: eastern) #better_link(website) 
         ]
         #if linkedin != "" [
           #h(0.3cm) 
-          #fa-icon("linkedin", fill: blue) #link(linkedin)
+          #fa-icon("linkedin", fill: blue) #better_link(linkedin)
         ]
         #if github != "" [
           #h(0.3cm)
-          #fa-icon("github") #link(github)
+          #fa-icon("github") #better_link(github)
         ]
       ]
     )
+  } else if header_style == 0 {
+    table(
+      columns: (2fr, auto),
+      align: (left + horizon, right + horizon),
+      stroke: none,
+      inset: 0pt,
+      [= #name],
+      [ #set text(info_font_size, font: info_font)
+        #loc | #phone | #link("mailto:" + email)
+        \
+        #if website != "" [ #better_link(website) ]
+        #if (website != "" and linkedin != "") or (website != "" and github != "") [ | ]
+        #if linkedin != "" [ #better_link(linkedin) ]
+        #if (linkedin != "" and github != "") [ | ]
+        #if github != "" [ #better_link(github) ]
+      ]
+    )
+  } else if header_style == 1 and show_icons == true {
+    [
+      #set align(center)
+      #set text(info_font_size, font: info_font)
+  
+      = #name
+      #fa-icon("location-dot", fill: red) 
+        #loc
+        #h(0.2cm)
+      #fa-icon("phone-square", fill: green) 
+        #phone
+        #h(0.2cm)
+      #fa-icon("square-envelope", fill: teal) 
+        #link("mailto:" + email)
+        #h(0.2cm)
+      #if website != "" [
+        #fa-icon("globe", fill: eastern) #better_link(website) 
+      ]
+      #if linkedin != "" [
+        #if website != "" [ #h(0.2cm) ] 
+        #fa-icon("linkedin", fill: blue) #better_link(linkedin)
+      ]
+      #if github != "" [
+        #if (website != "" or linkedin != "") [ #h(0.2cm) ]
+        #fa-icon("github") #better_link(github)
+      ]
+    ]
   } else {
     [
       #set align(center)
       #set text(info_font_size, font: info_font)
   
       = #name
-      #fa-icon("location-dot", fill: red) #loc #h(0.2cm)
-      #fa-icon("phone-square", fill: green) #phone #h(0.2cm)
-      #fa-icon("square-envelope", fill: teal) #link("mailto:" + email) #h(0.2cm)
-      #if website != "" [
-        #fa-icon("globe", fill: eastern) #link(website) 
-      ]
-      #if linkedin != "" [
-        #h(0.3cm) 
-        #fa-icon("linkedin", fill: blue) #link(linkedin)
-      ]
-      #if github != "" [
-        #h(0.3cm)
-        #fa-icon("github") #link(github)
-      ]
+        #loc | #phone | #link("mailto:" + email)
+        #if (website != "" or linkedin != "" or github != "") [ | ]
+        #if website != "" [ #better_link(website) ]
+        #if (website != "" and linkedin != "") or (website != "" and github != "") [ | ]
+        #if linkedin != "" [ #better_link(linkedin) ]
+        #if (linkedin != "" and github != "") [ | ]
+        #if github != "" [ #better_link(github) ]
     ]
   }
 }
@@ -175,7 +229,7 @@
     *#role* #h(1fr) #dates \
     #employer #h(1fr) #location
   ]
-  [ #content ]
+  [ #contents ]
 }
 
 #let multi_role_experience(
@@ -241,11 +295,11 @@
 
   if live_link != none or source_link != none {
     if live_link != none and source_link != none {
-      [ #fa-icon("globe", fill:eastern) #link(live_link)[asd] | #fa-icon("github") #link(source_link)[Source Code] ]
+      [ #fa-icon("globe", fill:eastern) #better_link(live_link, proj: "live") | #fa-icon("github") #better_link(source_link, proj: "source") ]
     } else if live_link != none {
-      [ #fa-icon("globe", fill:eastern) #link(live_link)[asd] ]
+      [ #fa-icon("globe", fill:eastern) #better_link(live_link, proj: "live")[asd] ]
     } else {
-      [ #fa-icon("github") #link(source_link)[Source Code] ]
+      [ #fa-icon("github") #better_link(source_link, proj: "source")]
     }
   } else if date != none [ #date ] 
 
