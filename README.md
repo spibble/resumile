@@ -1,7 +1,14 @@
 # resumile
-A simple, modern Typst resume template based on the likes of Jake's and chicv.
+A simple, modern Typst resume (and matching cover letter!) template based on the likes of Jake's and chicv.
+
+<div align="center">
+   <img src=./public/sample_resume.png width="48%" style="display: inline">
+   <img src=./public/sample_cover_letter.png width="48%" style="display: inline">
+</div>
 
 ## How to use
+**Note: these instructions are outdated! Stay tuned for better docs coming soon :P**
+
 This template is not on Typst Universe, so you'll have to either do things locally or use the web interface. In either case,
 
 1. **Clone this repo**: `git clone https://github.com/spibble/resumile.git`
