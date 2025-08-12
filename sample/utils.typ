@@ -60,6 +60,39 @@
   name_color, heading_color, show_icons,
   doc
 ) = {
+  for param in (margin_x, margin_y) {
+    assert(
+      type(param) == length,
+      message: "margin_x and margin_y should be length type variables (recommended is inches or centimeters)."
+    )
+  }
+
+  for param in (name_font_size, info_font_size, heading_font_size, body_font_size) {
+    assert(
+      type(param) == length,
+      message: "Font sizes should be length type variables (recommended is pt)."
+    )
+  }
+
+  for param in (name_font, info_font, heading_font, body_font) {
+    assert(
+      type(param) == str,
+      message: "Font names should be strings."
+    )
+  }
+
+  for param in (name_color, heading_color) {
+    assert(
+      type(param) == color,
+      message: "Colors should be color type variables (double check they are not strings containing color names)."
+    )
+  }
+
+  assert(
+    type(show_icons) == bool,
+    message: "show_icons should be true or false."
+  )
+
   set page(
     paper: "us-letter",
     margin: (x: margin_x, y: margin_y)
@@ -86,6 +119,42 @@
   website, linkedin, github,
   info_font, info_font_size, header_style, show_icons
 ) = {
+
+  for param in (name, loc, phone, email) {
+    assert(
+      type(param) == str,
+      message: "name, loc, phone, and email should be strings."
+    )
+  }
+
+  for param in (website, linkedin, github) {
+    assert(
+      type(param) == str,
+      message: "website, linkedin, and github should be strings containing links (double check they are not link type variables)."
+    )
+  }
+
+  assert(
+    type(info_font) == str,
+    message: "info_font should be a string."
+  )
+
+  assert(
+    type(info_font_size) == length,
+    message: "info_font_size should be a length type variable (recommended is pt)."
+  )
+
+  assert(
+    header_style == 0 or header_style == 1,
+    message: "header_style should be 0 or 1."
+  )
+
+  assert(
+    type(show_icons) == bool,
+    message: "show_icons should be true or false."
+  )
+
+
   if header_style == 0 and show_icons == true {
     table(
       columns: (2fr, auto),
@@ -184,6 +253,15 @@
   loc: "",
   gpa: none
 ) = {
+  for param in (school, grad_date, degree, loc) {
+    assert(
+      type(param) == str,
+      message: "school, grad_date, degree, and loc should be strings."
+    )
+  }
+
+  // type validation of gpa happens in format_gpa()
+
   [
     *#school* #h(1fr) #grad_date \
     #degree
@@ -213,14 +291,14 @@
     if param != none {
       assert(
         type(param) == str,
-        message: "all parameter values should be strings - double check!"
+        message: "role, dates, employer, and location should be strings."
       )
     }
 
     if contents != none {
       assert(
         type(contents) == content,
-        message: "contents should be a content block (i.e., encased in square brackets)"
+        message: "contents should be a content block (double check it is enclosed in square brackets)."
       )
     }
   }
@@ -243,7 +321,16 @@
     if param != none {
       assert(
         type(param) == array,
-        message: "roles, dates, and contents should be arrays - double check these values!"
+        message: "roles, dates, and contents should be arrays. If they are singular values, use experience() instead of multi_role_experience()."
+      )
+    }
+  }
+
+  for param in (employer, location) {
+    if param != none {
+      assert(
+        type(param) == str, 
+        message: "employer and location should be strings. If they are arrays, consider splitting them up into multiple separate experiences."
       )
     }
   }
@@ -277,7 +364,7 @@
     if param != none {
       assert(
         type(param) == str,
-        message: "name and tools should be strings - double check those values."
+        message: "name and tools should be strings."
       )
     }
   }
@@ -286,10 +373,25 @@
     if param != none {
       assert(
         type(param) == str,
-        message: "links"
+        message: "live_link and source_link should be strings (double check they are not link type variables)."
       )
     }
   }
+
+  if date != none {
+    assert(
+      type(date) == str,
+      message: "date should be a string."
+    )
+  }
+  
+  if contents != none {
+    assert(
+      type(contents) == content,
+      message: "contents should be a content block (double check it is enclosed in square brackets."
+    )
+  }
+
   
   [ *#name* | #tools #h(1fr) ] 
 
@@ -315,7 +417,13 @@
   lists: none,
   contents: none
 ) = {
-  for (i, list) in lists.enumerate() {
-    [*#list*: #contents.at(i) \ ]
+  if lists != none and contents != none {
+    assert(
+      type(lists) == array and type(contents) == array,
+      message: "lists and contents should both be arrays (include all lists in one skills() call, and double check lists is an array of strings and contents is also an array of strings, and not of content blocks.)"
+    )
+    for (i, list) in lists.enumerate() {
+      [*#list*: #contents.at(i) \ ]
+    }
   }
 }
